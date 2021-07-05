@@ -152,21 +152,18 @@ field_grid = [X(:)'; Y(:)'; z_quote*ones(1,numel(X))];
 if exist('E', 'var') == 0 || exist('H', 'var') == 0
     [E, H]=EHfields(truncatedCornerPatch, f0, field_grid);
 end
-% Efield=20*log10(sqrt(abs(E(1,:)).^2+abs(E(2,:)).^2+abs(E(3,:)).^2));
+
+% Only tangent component will be used in the equivalence principle
 E_tangent_modulus = sqrt(abs(E(1,:)).^2+abs(E(2,:)).^2);
 E_tangent_modulus_normalized = 10*log10(E_tangent_modulus / max(E_tangent_modulus, [], 'all'));
 H_tangent_modulus = sqrt(abs(H(1,:)).^2+abs(H(2,:)).^2);
 H_tangent_modulus_normalized = 10*log10(H_tangent_modulus / max(H_tangent_modulus, [], 'all'));
 
 figure(12);
-% cmin=10;
-% cmax=45;
-% v=[cmin:5:cmax];
 [c, h]=contourf(X_v*1e3, Y_v*1e3,reshape(E_tangent_modulus_normalized,length(X_v),length(Y_v)));
 axis equal;
 clabel(c, h);
 colorbar ;
-% caxis([cmin,cmax]);
 xlabel('X-axis [mm]')
 ylabel('Y-axis [mm]')
 title(['Tangent E field @ z=',num2str(z_quote*1e3),'mm']);
@@ -176,14 +173,10 @@ alpha(0.05);
 hold off;
 
 figure(13);
-% cmin=10;
-% cmax=45;
-% v=[cmin:5:cmax];
 [c, h]=contourf(X_v*1e3, Y_v*1e3,reshape(H_tangent_modulus_normalized,length(X_v),length(Y_v)));
 axis equal;
 clabel(c, h);
 colorbar ;
-% caxis([cmin,cmax]);
 xlabel('X-axis [mm]')
 ylabel('Y-axis [mm]')
 title(['Tangent H field @ z=',num2str(z_quote*1e3),'mm']);
@@ -192,12 +185,18 @@ fill([-1, 1, 1, -1]*100, [-1, -1, 1, 1]*100, 'r--');
 alpha(0.05);
 hold off;
 
+% The tangent component of the fields is very low out of a square of side
+% length of 20 cm, hence I will neglect the fields outside that square. So
+% I can redefine my problem on a restricted domain for the equivalence
+% principle application.
+
 %% Equivalence Principle Application
 % Reduced domain
 X_v_reduced=X_v(abs(X_v) < 10e-2);
 Y_v_reduced=Y_v(abs(Y_v) < 10e-2);
 
 % Reduce domain
+% utils.fixnan cleans up some NaN's that are yielded by EHfields
 E_x = reshape(E(1,:), length(Y_v), length(X_v));
 E_x = utils.fixnan(E_x);
 E_x = E_x(abs(Y_v) < 10e-2, abs(X_v) < 10e-2);
@@ -288,6 +287,10 @@ if exist('NormalizationOffset', 'var') == 0
     
     NormalizationOffset = max(RHCP_fw_xz);
     
+    % Use the same normalization to keep rato between RHCP and LHCP. Note
+    % that on the two planes the RHCP component max power must be the same,
+    % since the maximum directivity is @ boresight, of which the direction
+    % is included in both planes.
     RHCP_fw_xz = RHCP_fw_xz - NormalizationOffset;
     RHCP_fw_yz = RHCP_fw_yz - NormalizationOffset;
     LHCP_fw_xz = LHCP_fw_xz - NormalizationOffset;
