@@ -95,8 +95,9 @@ polaraxes('ThetaDir', 'clockwise', 'ThetaZeroLocation', 'top', 'rlim', [-25, 10]
 hold on;
 polarplot(zenith_span, RHCP_xz, 'g');
 polarplot(zenith_span, LHCP_xz, 'r--');
+polarplot(zenith_span, (max(RHCP_xz) - 3)*ones(1, length(zenith_span)), 'k-.');
 title("Copolar and Crosspolar components @ E1 carrier, xz-plane (\phi=0)");
-legend("RHCP", "LHCP");
+legend("RHCP", "LHCP", "-3dB line");
 hold off;
 
 figure(7);
@@ -104,8 +105,9 @@ polaraxes('ThetaDir', 'clockwise', 'ThetaZeroLocation', 'top', 'rlim', [-30, 10]
 hold on;
 polarplot(zenith_span, RHCP_yz, 'g');
 polarplot(zenith_span, LHCP_yz, 'r--');
+polarplot(zenith_span, (max(RHCP_yz) - 3)*ones(1, length(zenith_span)), 'k-.');
 title("Copolar and Crosspolar components @ E1 carrier, yz-plane (\phi=90°)");
-legend("RHCP", "LHCP");
+legend("RHCP", "LHCP", "-3dB line");
 hold off;
 
 
@@ -260,21 +262,23 @@ Full_pattern_xz = pattern(truncatedCornerPatch, f0, 0, linspace(0, 180, numel(ze
 Full_pattern_yz = pattern(truncatedCornerPatch, f0, 90, linspace(0, 180, numel(zenith_angles)), 'Normalize', true);
 
 figure(14);
-polaraxes('ThetaDir', 'clockwise', 'ThetaZeroLocation', 'top', 'rlim', [-20, 0]);
+polaraxes('ThetaDir', 'clockwise', 'ThetaZeroLocation', 'top', 'rlim', [-10, 0]);
 hold on;
-polarplot(zenith_angles, E_pattern_xz);
-polarplot(zenith_angles, Full_pattern_xz);
+polarplot(zenith_angles, E_pattern_xz, 'k-');
+polarplot(zenith_angles, Full_pattern_xz, 'g-.');
+polarplot(zenith_angles, -3*ones(1,length(zenith_angles)), 'r.');
 title("Power Pattern @ E1 carrier, xz-plane (\phi=0)");
-legend("Equivalence", "Full Wave");
+legend("Equivalence", "Full Wave", "-3dB threshold");
 hold off;
 
 figure(15);
-polaraxes('ThetaDir', 'clockwise', 'ThetaZeroLocation', 'top', 'rlim', [-20, 0]);
+polaraxes('ThetaDir', 'clockwise', 'ThetaZeroLocation', 'top', 'rlim', [-10, 0]);
 hold on;
-polarplot(zenith_angles, E_pattern_yz);
-polarplot(zenith_angles, Full_pattern_yz);
+polarplot(zenith_angles, E_pattern_yz, 'k-');
+polarplot(zenith_angles, Full_pattern_yz, 'g-.');
+polarplot(zenith_angles, -3*ones(1,length(zenith_angles)), 'r.');
 title("Power Pattern @ E1 carrier, xz-plane (\phi=0)");
-legend("Equivalence", "Full Wave");
+legend("Equivalence", "Full Wave", "-3dB threshold");
 hold off;
 
 %% Co- and Cross-polar component comparison
