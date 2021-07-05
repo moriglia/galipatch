@@ -1,0 +1,1 @@
+save slowVariables.mat E H Z ARboresight ;
