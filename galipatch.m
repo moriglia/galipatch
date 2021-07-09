@@ -223,15 +223,15 @@ phase_constant = 2*pi/lambda0;
 eta_medium = 377;
 
 % XZ plane
-kernel_xz_plane = exp(1i*phase_constant*sin(zenith_angles.')*X_v_reduced);
-P_x_xz = kernel_xz_plane*sum(E_x, 1).'*dX*dY;
-P_y_xz = kernel_xz_plane*sum(E_y, 1).'*dX*dY;
+kernel_xz_plane = exp(1i*phase_constant*X_v_reduced.'*sin(zenith_angles));
+P_x_xz = sum(E_x, 1)*kernel_xz_plane*dX*dY;
+P_y_xz = sum(E_y, 1)*kernel_xz_plane*dX*dY;
 
-Q_x_xz = kernel_xz_plane*sum(H_x, 1).'*dX*dY;
-Q_y_xz = kernel_xz_plane*sum(H_y, 1).'*dX*dY;
+Q_x_xz = sum(H_x, 1)*kernel_xz_plane*dX*dY;
+Q_y_xz = sum(H_y, 1)*kernel_xz_plane*dX*dY;
 
-E_theta_xz = eta_medium*cos(zenith_angles).*Q_y_xz.' + P_x_xz.';
-E_phi_xz = -eta_medium*Q_x_xz.' + cos(zenith_angles).*P_y_xz.';
+E_theta_xz = eta_medium*cos(zenith_angles).*Q_y_xz + P_x_xz;
+E_phi_xz = -eta_medium*Q_x_xz + cos(zenith_angles).*P_y_xz;
 
 E_theta_xz = 1j*phase_constant/4/pi*E_theta_xz;
 E_phi_xz = 1j*phase_constant/4/pi*E_phi_xz;
@@ -267,7 +267,7 @@ hold on;
 polarplot(zenith_angles, E_pattern_xz, 'k-');
 polarplot(zenith_angles, Full_pattern_xz, 'g-.');
 polarplot(zenith_angles, -3*ones(1,length(zenith_angles)), 'r.');
-title("Power Pattern @ E1 carrier, xz-plane (\phi=0)");
+title("Normalized Pattern @ E1 carrier, xz-plane (\phi=0)");
 legend("Equivalence", "Full Wave", "-3dB threshold");
 hold off;
 
@@ -277,7 +277,7 @@ hold on;
 polarplot(zenith_angles, E_pattern_yz, 'k-');
 polarplot(zenith_angles, Full_pattern_yz, 'g-.');
 polarplot(zenith_angles, -3*ones(1,length(zenith_angles)), 'r.');
-title("Power Pattern @ E1 carrier, xz-plane (\phi=0)");
+title("Normalized Pattern @ E1 carrier, yz-plane (\phi=0)");
 legend("Equivalence", "Full Wave", "-3dB threshold");
 hold off;
 
@@ -291,7 +291,7 @@ if exist('NormalizationOffset', 'var') == 0
     
     NormalizationOffset = max(RHCP_fw_xz);
     
-    % Use the same normalization to keep rato between RHCP and LHCP. Note
+    % Use the same normalization to keep ratio between RHCP and LHCP. Note
     % that on the two planes the RHCP component max power must be the same,
     % since the maximum directivity is @ boresight, of which the direction
     % is included in both planes.
